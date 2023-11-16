@@ -1,0 +1,24 @@
+{
+  "name": "dllist.js",
+  "version": "1.0.0",
+  "description": "A Javascript implementation of double linked list",
+  "main": "dllist.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Real-John-Cheung/dllist.js.git"
+  },
+  "keywords": [
+    "double",
+    "linked",
+    "list"
+  ],
+  "author": "JohnC",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Real-John-Cheung/dllist.js/issues"
+  },
+  "homepage": "https://github.com/Real-John-Cheung/dllist.js#readme"
+}
