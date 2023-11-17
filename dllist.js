@@ -272,6 +272,12 @@ class DoubleLinkedList {
         if (!node instanceof DoubleLinkedList) throw new Error("Type mismatch: node should be a DoubleLinkedListNode");
         if (this.size < 1) throw new Error("the list is empty");
         if (node.owner !== this) throw new Error("node should belong to the list");
+        if (node === this.first) {
+            return this.popLeft().value;
+        }
+        if (node === this.last) {
+            return this.pop().value;
+        }
         node.owner = null;
         let r = node.value;
         let p = node.prev;
