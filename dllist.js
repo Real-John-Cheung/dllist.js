@@ -1,3 +1,12 @@
+class DoubleLinkedListNode {
+    constructor(v) {
+        this.value = v;
+        this.next = null;
+        this.prev = null;
+        this.owner = null;
+    }
+}
+
 class DoubleLinkedList {
     constructor() {
         this.size = 0;
@@ -237,24 +246,27 @@ class DoubleLinkedList {
         if (Math.abs(index) > this.size - 1) throw new Error("index out of range");
         if (index === 0) return this.first;
         if (index === this.size - 1) return this.last;
-        if (index > 0) {
-            let n = this.first;
-            let c = 0;
-            while (c < index) {
-                n = n.next;
-                c++;
-            }
-            return n;
+        if (index < 0) index = this.size + index;
+        let node, startPos, reverseDir;
+        if (index < this.size / 2) {
+            node = this.first;
+            startPos = 0;
+            reverseDir = 0;
         } else {
-            index *= -1;
-            let n = this.last;
-            let c = 0;
-            while (c < index) {
-                n = n.prev;
-                c++;
-            }
-            return n;
+            node = this.last;
+            startPos = this.size - 1;
+            reverseDir = 1;
         }
+        if (!reverseDir) {
+            for (let i = startPos; i < index; ++i) {
+                node = node.next;
+            }
+        } else {
+            for (let i = startPos; i > index; --i) {
+                node = node.prev;
+            }
+        }
+        return node;
     }
 
     pop() {
@@ -269,6 +281,8 @@ class DoubleLinkedList {
         if (n.next !== null) n.next.prev = null;
         this.first = n.next;
         this.size--;
+        n.next = null;
+        n.prev = null;
         return r;
     }
 
@@ -280,6 +294,8 @@ class DoubleLinkedList {
         if (n.prev !== null) n.prev.next = null;
         this.last = n.prev;
         this.size--;
+        n.next = null;
+        n.prev = null;
         return r;
     }
 
@@ -299,6 +315,8 @@ class DoubleLinkedList {
         let n = node.next;
         node.prev.next = n;
         node.next.prev = p;
+        node.prev = null;
+        node.next = null;
         this.size--;
         return r;
     }
