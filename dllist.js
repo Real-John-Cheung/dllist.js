@@ -1,12 +1,3 @@
-class DoubleLinkedListNode {
-    constructor(v) {
-        this.value = v;
-        this.next = null;
-        this.prev = null;
-        this.owner = null;
-    }
-}
-
 class DoubleLinkedList {
     constructor() {
         this.size = 0;
@@ -64,6 +55,24 @@ class DoubleLinkedList {
             this.last.next = x;
             x.prev = this.last;
             this.last = x;
+        }
+        this.size++;
+        return x;
+    }
+
+    appendNodeLeft(x) {
+        if (!x instanceof DoubleLinkedListNode) throw new Error("Type mismatch: appendNode expected a DoubleLinkedListNode");
+        if (x.owner !== null) throw new Error("The node to add should not belong to a list");
+        x.owner = this;
+        if (this.first == null) {
+            this.first = x;
+            this.last = this.first;
+            x.prev = null;
+            x.next = null;
+        } else {
+            x.next = this.first;
+            this.first.prev = x;
+            this.first = x;
         }
         this.size++;
         return x;
@@ -129,6 +138,7 @@ class DoubleLinkedList {
         if (x instanceof DoubleLinkedListNode) x = x.value;
         if (!ref instanceof DoubleLinkedListNode) throw new Error("Type mismatch: ref should be a DoubleLinkedListNode");
         if (ref.owner !== this) throw new Error("ref should belong to the list");
+        if (ref === this.last) return this.append(x);
         let newNode = new DoubleLinkedListNode(x);
         newNode.owner = this;
         let na = ref.next;
@@ -144,6 +154,7 @@ class DoubleLinkedList {
         if (x instanceof DoubleLinkedListNode) x = x.value;
         if (!ref instanceof DoubleLinkedListNode) throw new Error("Type mismatch: ref should be a DoubleLinkedListNode");
         if (ref.owner !== this) throw new Error("ref should belong to the list");
+        if (ref === this.first) return this.appendLeft(x);
         let newNode = new DoubleLinkedListNode(x);
         newNode.owner = this;
         let pb = ref.prev;
@@ -166,6 +177,7 @@ class DoubleLinkedList {
     insertNodeAfter(node, ref) {
         if (!node instanceof DoubleLinkedListNode) throw new Error("Type mismatch: insertNode expected a DoubleLinkedListNode");
         if (node.owner !== null) throw new Error("Node to insert should not belong to a list");
+        if (ref === this.last) return this.appendNode(node);
         node.owner = this;
         let na = ref.next;
         node.prev = ref;
@@ -179,6 +191,7 @@ class DoubleLinkedList {
     insertNodeBefore(node, ref) {
         if (!node instanceof DoubleLinkedListNode) throw new Error("Type mismatch: insertNode expected a DoubleLinkedListNode");
         if (node.owner !== null) throw new Error("Node to insert should not belong to a list");
+        if (ref === this.first) return this.appendNodeLeft(node);
         node.owner = this;
         let pb = ref.prev;
         pb.next = node;
@@ -222,6 +235,8 @@ class DoubleLinkedList {
     nodeAt(index) {
         if (!Number.isInteger(index)) throw new Error("index should be an integer");
         if (Math.abs(index) > this.size - 1) throw new Error("index out of range");
+        if (index === 0) return this.first;
+        if (index === this.size - 1) return this.last;
         if (index > 0) {
             let n = this.first;
             let c = 0;
@@ -251,7 +266,7 @@ class DoubleLinkedList {
         let n = this.first;
         n.owner = null;
         let r = n.value;
-        n.next.prev = null;
+        if (n.next !== null) n.next.prev = null;
         this.first = n.next;
         this.size--;
         return r;
@@ -262,7 +277,7 @@ class DoubleLinkedList {
         let n = this.last;
         n.owner = null;
         let r = n.value;
-        n.prev.next = null;
+        if (n.prev !== null) n.prev.next = null;
         this.last = n.prev;
         this.size--;
         return r;
@@ -272,13 +287,13 @@ class DoubleLinkedList {
         if (!node instanceof DoubleLinkedList) throw new Error("Type mismatch: node should be a DoubleLinkedListNode");
         if (this.size < 1) throw new Error("the list is empty");
         if (node.owner !== this) throw new Error("node should belong to the list");
+        node.owner = null;
         if (node === this.first) {
-            return this.popLeft().value;
+            return this.popLeft();
         }
         if (node === this.last) {
-            return this.pop().value;
+            return this.pop();
         }
-        node.owner = null;
         let r = node.value;
         let p = node.prev;
         let n = node.next;
@@ -292,13 +307,13 @@ class DoubleLinkedList {
         if (!Number.isInteger(n)) throw new Error("n should be an integer");
         if (n === 0) return;
         let nMod = Math.abs(n) % this.size;
+        if (nMod === 0) return;
         let splitIndex;
         if (n > 0) {
             splitIndex = this.size - nMod;
         } else {
             splitIndex = nMod;
         }
-
         let nl = this.nodeAt(splitIndex - 1);
         if (nl !== null) {
             let nf = nl.next;
